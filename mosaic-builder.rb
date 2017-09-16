@@ -3,43 +3,43 @@ require 'RMagick'
 include Magick
 
 class MosaicBuilder
-    attr_accessor :images, :name, :weight, :sizeX, :sizeY, :fragments
-    @@folderName = "./tmp/"
+    attr_accessor :images, :name, :weight, :size_x, :size_y, :fragments
+    @@folder_name = "./tmp/"
     
-    def initialize(images, name, weightInKo, sizeX, sizeY)
+    def initialize(images, name, weight_in_ko, size_x, size_y)
         @fragments = []        
         @images = images
         @name = name
-        @weightInKo = weightInKo
-        @sizeX = sizeX        
-        @sizeY = sizeY
-        createTmpFolder
-        loadFragments
+        @weight_in_ko = weight_in_ko
+        @size_x = size_x        
+        @size_y = size_y
+        create_tmp_folder
+        load_fragment
     end
 
     #Instanciate a fragment for each image
-    def loadFragments
+    def load_fragment
         images.each.with_index do |image, index| 
-            @fragments.push(buildFragment(image, index))
+            @fragments.push(build_fragment(image, index))
         end
     end
 
     def write
-        @image ||=buildMosaic
+        @image ||=build_mosaic
         @image.write(@name) {self.quality = 100}
         puts "File size : #{@image.filesize}"                     
         puts "File size : #{@image.filesize}"     
         puts "Image quality : #{@image.quality}"        
         puts "Final image saved as : #{@name}"   
-        deleteTmpFolder     
+        delete_tmp_folder     
         exit
     end
 
     def self.folder
-        return @@folderName
+        return @@folder_name
     end
 
-    def buildFragment(image, id)
+    def build_fragment(image, id)
         Fragment.new(
             id,
             image['url'],
@@ -47,25 +47,25 @@ class MosaicBuilder
             image['positionY'],
             image['percentageX'],
             image['percentageY'],
-            sizeX,
-            sizeY
+            size_x,
+            size_y
         )
     end
 
-    def buildMosaic
-        @imageList = ImageList.new
+    def build_mosaic
+        @image_list = ImageList.new
         @fragments.each do |fragment|
-            @imageList << fragment.image
+            @image_list << fragment.image
         end
-        @imageList.mosaic
+        @image_list.mosaic
     end
 
-    def createTmpFolder
-        Dir.mkdir @@folderName unless Dir.exist? @@folderName
+    def create_tmp_folder
+        Dir.mkdir @@folder_name unless Dir.exist? @@folder_name
     end
 
-    def deleteTmpFolder
-        FileUtils.rm_r(@@folderName)
+    def delete_tmp_folder
+        FileUtils.rm_r(@@folder_name)
     end
 
 end
