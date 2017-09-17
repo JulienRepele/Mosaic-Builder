@@ -27,7 +27,10 @@ class MosaicBuilder
     def write
         @image ||=build_mosaic
         @image.write(@name) {self.quality = 100}
-        puts "File size : #{@image.filesize}"                     
+        puts "File size : #{@image.filesize}"  
+        puts "File size : #{@image.filesize}"           
+        jpg_quality = compute_jpg_quality(@image.filesize)  
+        @image.write(@name) {self.quality = jpg_quality}        
         puts "File size : #{@image.filesize}"     
         puts "Image quality : #{@image.quality}"        
         puts "Final image saved as : #{@name}"   
@@ -38,6 +41,7 @@ class MosaicBuilder
     def self.folder
         return @@folder_name
     end
+
 
     def build_fragment(image, id)
         Fragment.new(
@@ -58,6 +62,21 @@ class MosaicBuilder
             @image_list << fragment.image
         end
         @image_list.mosaic
+    end
+
+    # Fonction affine déterminée à partir de : 
+    # https://www.graphicsmill.com/blog/2014/11/06/Compression-ratio-for-different-JPEG-quality-values#.WbzhY9NJad1
+    def compute_jpg_quality(image_weight)
+        puts "Weight in ko : #{@weight_in_ko}"   
+        puts "Actual weight : #{image_weight}"
+        compression_factor = @weight_in_ko.to_f * 1000 / image_weight.to_f
+        puts "Compression factor : #{compression_factor}"
+        jpg_quality = 100  - 10 * compression_factor.to_f              
+        if jpg_quality >= 1 || jpg_quality <= 100
+            jpg_quality
+        else
+            100
+        end
     end
 
     def create_tmp_folder
