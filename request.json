@@ -1,6 +1,6 @@
 {
-    "name": "meme.jpg",
-    "weightInKo": 80,
+    "name": "meme",
+    "weightInKo": 90,
     "sizeX": 300,
     "sizeY": 300,
     "images": [
@@ -37,7 +37,7 @@
 
 
 /*{
-    "name": "tile.jpg",
+    "name": "tile",
     "weightInKo": 100,
     "sizeX": 500,
     "sizeY": 500,

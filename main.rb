@@ -1,10 +1,10 @@
 require 'json'
-require './mosaic-builder'
+require_relative 'mosaic-builder'
 
 json_file = File.read('request.json')
 request = JSON.parse(json_file)
 
-mosaicBuilder = MosaicBuilder.new(
+mosaic_builder = MosaicBuilder.new(
     request['images'],
     request['name'],
     request['weightInKo'],
@@ -12,4 +12,4 @@ mosaicBuilder = MosaicBuilder.new(
     request['sizeY']
 )
 
-mosaicBuilder.write
+mosaic_builder.write

@@ -1,3 +1,4 @@
+require 'minitest/autorun'
 require './fragment'
 require 'RMagick'
 include Magick
@@ -7,6 +8,11 @@ class MosaicBuilder
     @@folder_name = "./tmp/"
     
     def initialize(images, name, weight_in_ko, size_x, size_y)
+        raise ArgumentError, "No image for the mosaic" unless !images.nil? && images.size > 0
+        raise ArgumentError, "Set a name" unless !name.nil? && name.size > 0
+        raise ArgumentError, "Weight must be positive" unless !weight_in_ko.nil? && weight_in_ko > 0
+        raise ArgumentError, "Size must be positive" unless !size_x.nil? && !size_y.nil? && size_x > 0 && size_y > 0
+        
         @fragments = []        
         @images = images
         @name = name
@@ -25,23 +31,20 @@ class MosaicBuilder
     end
 
     def write
-        @image ||=build_mosaic
-        @image.write(@name) {self.quality = 100}
+        jpg_quality ||= 100
+        @image.write("#{@name}.jpg") {self.quality = jpg_quality}
         puts "File size : #{@image.filesize}"  
-        puts "File size : #{@image.filesize}"           
         jpg_quality = compute_jpg_quality(@image.filesize)  
-        @image.write(@name) {self.quality = jpg_quality}        
+        @image.write("#{@name}.jpg") {self.quality = jpg_quality}        
         puts "File size : #{@image.filesize}"     
         puts "Image quality : #{@image.quality}"        
-        puts "Final image saved as : #{@name}"   
+        puts "Final image saved as : #{@name}.jpg"   
         delete_tmp_folder     
-        exit
     end
 
     def self.folder
         return @@folder_name
     end
-
 
     def build_fragment(image, id)
         Fragment.new(
