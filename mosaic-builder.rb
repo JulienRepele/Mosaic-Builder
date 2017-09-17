@@ -8,6 +8,7 @@ class MosaicBuilder
     @@folder_name = "./tmp/"
     
     def initialize(images, name, weight_in_ko, size_x, size_y)
+
         raise ArgumentError, "No image for the mosaic" unless !images.nil? && images.size > 0
         raise ArgumentError, "Set a name" unless !name.nil? && name.size > 0
         raise ArgumentError, "Weight must be positive" unless !weight_in_ko.nil? && weight_in_ko > 0
@@ -19,6 +20,7 @@ class MosaicBuilder
         @weight_in_ko = weight_in_ko
         @size_x = size_x        
         @size_y = size_y
+
         create_tmp_folder
         load_fragment
     end
@@ -31,7 +33,9 @@ class MosaicBuilder
     end
 
     def write
+        @image ||=build_mosaic        
         jpg_quality ||= 100
+        puts "jpg_quality : #{jpg_quality}"
         @image.write("#{@name}.jpg") {self.quality = jpg_quality}
         puts "File size : #{@image.filesize}"  
         jpg_quality = compute_jpg_quality(@image.filesize)  
@@ -70,15 +74,12 @@ class MosaicBuilder
     # Fonction affine déterminée à partir de : 
     # https://www.graphicsmill.com/blog/2014/11/06/Compression-ratio-for-different-JPEG-quality-values#.WbzhY9NJad1
     def compute_jpg_quality(image_weight)
-        puts "Weight in ko : #{@weight_in_ko}"   
-        puts "Actual weight : #{image_weight}"
-        compression_factor = @weight_in_ko.to_f * 1000 / image_weight.to_f
-        puts "Compression factor : #{compression_factor}"
-        jpg_quality = 100  - 10 * compression_factor.to_f              
-        if jpg_quality >= 1 || jpg_quality <= 100
+        compression_factor = 1 - @weight_in_ko.to_f * 1000 / image_weight.to_f
+        jpg_quality = 87.4  - 81.1 * compression_factor.to_f  
+        if jpg_quality >= 1 && jpg_quality <= 100
             jpg_quality
         else
-            100
+            jpg_quality = 100
         end
     end
 
@@ -89,5 +90,9 @@ class MosaicBuilder
     def delete_tmp_folder
         FileUtils.rm_r(@@folder_name)
     end
+
+    #Test
+
+    
 
 end
