@@ -79,12 +79,14 @@ class MosaicBuilder
 
 
     def recursive_jpg_quality(quality, pitch)
+        # To compute jpg quality, we use dichotomy and compute file size
         if pitch == 1
             return quality
         elsif 
             pitch = pitch / 2
         end
 
+        # The file size is computed without writing the image on the disk
         blob = @image.to_blob { self.quality = quality }
         computed_file_size = blob.bytesize
 

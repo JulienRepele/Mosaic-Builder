@@ -20,6 +20,7 @@ class Fragment
         set_position_settings
     end
 
+
     def download_image
         puts "Donwloading #{@url}"
         open(@url) {|f|
@@ -30,6 +31,7 @@ class Fragment
         puts "Saved as #{@path}"
     end
 
+
     def resize_image
         image = ImageList.new(@path)
         new_size_x = parent_size_x * percentage_x / 100
@@ -38,6 +40,7 @@ class Fragment
         image.write(@path)
         @image = image
     end
+    
 
     def set_position_settings
         page = Magick::Rectangle.new(0,0,0,0)
