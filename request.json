@@ -1,6 +1,6 @@
-/*{
+{
     "name": "meme",
-    "weightInKo": 900,
+    "weightInKo": 16,
     "sizeX": 300,
     "sizeY": 300,
     "images": [
@@ -33,10 +33,10 @@
             "percentageY": 50
         }
     ]
-}*/
+}
 
 
-{
+/*{
     "name": "tile",
     "weightInKo": 900,
     "sizeX": 500,
@@ -155,5 +155,5 @@
             "percentageY": 25
         }
     ]
-}
+}*/
 

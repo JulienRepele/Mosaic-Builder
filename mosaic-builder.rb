@@ -9,6 +9,7 @@ class MosaicBuilder
     
     def initialize(images, name, weight_in_ko, size_x, size_y)
 
+        #Validation
         raise ArgumentError, "No image for the mosaic" unless !images.nil? && images.size > 0
         raise ArgumentError, "Set a name" unless !name.nil? && name.size > 0
         raise ArgumentError, "Weight must be positive" unless !weight_in_ko.nil? && weight_in_ko > 0
@@ -32,13 +33,10 @@ class MosaicBuilder
         end
     end
 
+
     def write
         @image ||=build_mosaic        
-        jpg_quality ||= 100
-        puts "jpg_quality : #{jpg_quality}"
-        @image.write("#{@name}.jpg") {self.quality = jpg_quality}
-        puts "File size : #{@image.filesize}"  
-        jpg_quality = compute_jpg_quality(@image.filesize)  
+        jpg_quality = compute_jpg_quality
         @image.write("#{@name}.jpg") {self.quality = jpg_quality}        
         puts "File size : #{@image.filesize}"     
         puts "Image quality : #{@image.quality}"        
@@ -46,9 +44,11 @@ class MosaicBuilder
         delete_tmp_folder     
     end
 
+
     def self.folder
         return @@folder_name
     end
+
 
     def build_fragment(image, id)
         Fragment.new(
@@ -63,6 +63,7 @@ class MosaicBuilder
         )
     end
 
+
     def build_mosaic
         @image_list = ImageList.new
         @fragments.each do |fragment|
@@ -71,28 +72,42 @@ class MosaicBuilder
         @image_list.mosaic
     end
 
-    # Fonction affine déterminée à partir de : 
-    # https://www.graphicsmill.com/blog/2014/11/06/Compression-ratio-for-different-JPEG-quality-values#.WbzhY9NJad1
-    def compute_jpg_quality(image_weight)
-        compression_factor = 1 - @weight_in_ko.to_f * 1000 / image_weight.to_f
-        jpg_quality = 87.4  - 81.1 * compression_factor.to_f  
-        if jpg_quality >= 1 && jpg_quality <= 100
-            jpg_quality
-        else
-            jpg_quality = 100
-        end
+
+    def compute_jpg_quality
+        recursive_jpg_quality(50, 50)
     end
+
+
+    def recursive_jpg_quality(quality, pitch)
+        if pitch == 1
+            return quality
+        elsif 
+            pitch = pitch / 2
+        end
+
+        blob = @image.to_blob { self.quality = quality }
+        computed_file_size = blob.bytesize
+
+        if computed_file_size > @weight_in_ko * 1000
+            quality = quality - pitch
+        elsif computed_file_size < @weight_in_ko * 1000
+            quality = quality + pitch
+        else
+            return quality
+        end
+
+        recursive_jpg_quality(quality, pitch)            
+        
+    end
+
 
     def create_tmp_folder
         Dir.mkdir @@folder_name unless Dir.exist? @@folder_name
     end
 
+
     def delete_tmp_folder
         FileUtils.rm_r(@@folder_name)
     end
-
-    #Test
-
-    
 
 end
