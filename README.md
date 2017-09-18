@@ -1,9 +1,9 @@
-##Prerequisite
+## Prerequisite
 Use following command to install dependencies:
 `bundle install`
 
-##Launch script
+## Launch script
 `ruby main.rb`
 
-##Make custom requests
+## Make custom requests
 Edit the `request.json` file
