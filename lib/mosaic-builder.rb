@@ -1,5 +1,4 @@
-require 'minitest/autorun'
-require './fragment'
+require_relative 'fragment'
 require 'RMagick'
 include Magick
 

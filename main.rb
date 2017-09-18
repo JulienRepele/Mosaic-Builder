@@ -1,5 +1,5 @@
 require 'json'
-require_relative 'mosaic-builder'
+require_relative './lib/mosaic-builder'
 
 json_file = File.read('request.json')
 request = JSON.parse(json_file)
